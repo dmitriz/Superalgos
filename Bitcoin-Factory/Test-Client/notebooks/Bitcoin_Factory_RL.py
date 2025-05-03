@@ -14,6 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
+from security import safe_command
 
 def import_install_packages(package):
     # This is an evil little function
@@ -24,7 +25,7 @@ def import_install_packages(package):
         __import__(package)
     except:
         import subprocess
-        subprocess.call([sys.executable, "-m", "pip", "install", package])
+        safe_command.run(subprocess.call, [sys.executable, "-m", "pip", "install", package])
 
 import_install_packages('string')
 import string
@@ -65,7 +66,7 @@ sys.stdout.write('\n')
 
 if parse_version(ray.__version__) < parse_version("1.12.1"):
     import subprocess
-    subprocess.call([sys.executable, "-m", "pip", "install", "ray[all]>1.12.0"])    
+    safe_command.run(subprocess.call, [sys.executable, "-m", "pip", "install", "ray[all]>1.12.0"])    
     import_install_packages('importlib')
     importlib.reload(ray)
     print("New RAY: ", ray.__version__)
