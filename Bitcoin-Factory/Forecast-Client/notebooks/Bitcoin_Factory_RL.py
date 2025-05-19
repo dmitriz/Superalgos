@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import random
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -14,6 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
+import secrets
 
 def import_install_packages(package):
     # This is an evil little function
@@ -376,8 +376,7 @@ class SimpleTradingEnv(gym.Env):
 
     def _take_action(self, action):
         self._done = False
-        current_price = random.uniform(
-            self.df_normal.loc[self._current_candle, "low"], self.df_normal.loc[self._current_candle, "high"])
+        current_price = secrets.SystemRandom().uniform(self.df_normal.loc[self._current_candle, "low"], self.df_normal.loc[self._current_candle, "high"])
 
         action_type = action[0]
         amount = ( action[1] + 1 ) * 0.25  #[0.25, 0.5 ... 1.0]
@@ -406,7 +405,7 @@ class SimpleTradingEnv(gym.Env):
                     pos['entry_price'] = (pos['total'] + assets_bought * current_price)/pos['amount']
                     pos['total'] = pos['amount'] * current_price
                 else:
-                    pos_id = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
+                    pos_id = ''.join([secrets.choice(string.ascii_letters + string.digits) for n in range(32)])
                     self.positions.append({'id': pos_id, 'asset': 'BTC', 'type': 'Long', 'amount': assets_bought, 'entry_price': current_price, 'total' : assets_bought * current_price})
 
         elif action_type == 1: # Sell Long Market
@@ -457,7 +456,7 @@ class SimpleTradingEnv(gym.Env):
                             pos['entry_price'] = (pos['total'] + assets_bought * limit_price)/pos['amount']
                             pos['total'] = pos['amount'] * limit_price
                         else:
-                            pos_id = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
+                            pos_id = ''.join([secrets.choice(string.ascii_letters + string.digits) for n in range(32)])
                             self.positions.append({'id': pos_id, 'asset': 'BTC', 'type': 'Long', 'amount': assets_bought, 'entry_price': limit_price, 'total' : assets_bought * limit_price})
 
         elif action_type == 3: # Sell Long Limit
@@ -505,7 +504,7 @@ class SimpleTradingEnv(gym.Env):
                     pos['entry_price'] = (pos['total'] + short_assets_bought * (1 - self._trading_fee) * current_price)/pos['amount']
                     pos['total'] = pos['amount'] * current_price
                 else:
-                    pos_id = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
+                    pos_id = ''.join([secrets.choice(string.ascii_letters + string.digits) for n in range(32)])
                     self.positions.append({'id': pos_id, 'asset': 'BTC', 'type': 'Short', 'amount': short_assets_bought * (1 - self._trading_fee), 'entry_price': current_price, 'total' : short_assets_bought * current_price * (1 - self._trading_fee)})
                     
         elif action_type == 5: # Sell Short Market
@@ -560,7 +559,7 @@ class SimpleTradingEnv(gym.Env):
                             pos['entry_price'] = (pos['total'] + short_assets_bought * (1 - self._trading_fee) * limit_price)/pos['amount']
                             pos['total'] = pos['amount'] * limit_price
                         else:
-                            pos_id = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
+                            pos_id = ''.join([secrets.choice(string.ascii_letters + string.digits) for n in range(32)])
                             self.positions.append({'id': pos_id, 'asset': 'BTC', 'type': 'Short', 'amount': short_assets_bought * (1 - self._trading_fee), 'entry_price': limit_price, 'total' : short_assets_bought * limit_price * (1 - self._trading_fee)})
                     
         elif action_type == 7: # Sell Short Limit
